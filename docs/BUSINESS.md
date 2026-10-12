@@ -8,13 +8,15 @@ The strongest initial customer is an owner with cross-brand equipment, an EV reg
 
 The offer should still make sense without AI. If the customer only needs a native charging timer, configure it and price that smaller job fairly. The interesting commercial work lies in the exceptions: changing departure times, uncertain generation, battery/EV competition, cross-vendor control and a household that does not want to maintain Home Assistant.
 
+**Current readiness:** v0.2 supplies planning, read-only integration contracts and an optional attended evcc mode handoff. It is not yet an unattended product or a field-qualified installation package. The proposed service should progress from observation to a narrow supported pilot using the [compatibility evidence standard](COMPATIBILITY.md) and [multi-brand design](MULTIBRAND_DESIGN.md). Do not sell a compatibility promise for every car simply because the charger uses Type 2 or OCPP.
+
 ## Two ways to deliver the hardware
 
 **BYO host:** perform a fixed-scope suitability check, install on supported hardware, document what the customer must keep running, and price unusual troubleshooting separately. Allow Pi, small PC, existing HA host or a suitable VM once qualified. Hardware agnosticism expands the market; it does not eliminate the cost of supporting arbitrary old systems.
 
 **Supplied appliance:** sell a tested commodity device with reliable storage, power supply, cooling, recovery image and inventory record. Include a replacement/repair policy. It need not be a Mac mini and should not require a GPU. Keep a small supported-device list while leaving the software architecture portable.
 
-Offer the ESP32 bridge as a separately identified component when the supported vehicle path requires it. Keep electrical installation and any required metering with the licensed installer. A custom hardware design is unnecessary before demand and support economics are known.
+For the reusable multi-brand offer, qualify one local meter route and one evcc-supported charger family. Add SOC telemetry as an optional capability; a BYD or other car without a working account API can still use a charger-delivered energy goal. Offer an ESP32 bridge only for a separately qualified Tesla-specific path. Keep electrical installation and any required metering with the licensed installer. A custom hardware design is unnecessary before demand and support economics are known.
 
 ## Initial service packages to test
 
@@ -27,6 +29,8 @@ Offer the ESP32 bridge as a separately identified component when the supported v
 
 Keep no-subscription ownership possible. It is reasonable to charge for future labour without charging rent for an already-installed timer. Distinguish the installation fee, hardware margin, optional support and third-party API/weather charges. “Lifetime support” without a funded reserve is not a credible promise.
 
+Quote upstream entitlements explicitly. Both shortlisted Fronius/Wallbox evcc routes currently require sponsor tokens; one-time and installer-bundle options can fit a customer who dislikes subscriptions. The official terms permit bundles for installed customer hardware and prohibit selling tokens alone. The experimental load-management feature also flags future commercial licensing. Check current terms and scope before quoting, with no assumption that an MIT source licence makes all supplier services free. [evcc sponsorship](https://docs.evcc.io/en/sponsorship/), [load-management restrictions](https://docs.evcc.io/en/features/loadmanagement/)
+
 BYO API keys give the household control of its provider account. An installer-managed API account can simplify setup later, but needs per-customer metering, tenant isolation, credential handling, spending controls, consent and clear offboarding. A shared secret embedded in every device image is unacceptable. Do not build a central cloud platform until the local pilot reveals a need.
 
 ## Competition and substitution
@@ -35,16 +39,20 @@ BYO API keys give the household control of its provider account. An installer-ma
 |---|---|---|
 | Native inverter AI plus Tesla schedule | Already paid for; few moving parts | Meaningful extra convenience or measured savings |
 | Tesla energy ecosystem | Integrated experience | Cross-brand value without making equivalent reliability claims |
-| evcc | Established EV/solar/tariff automation | Why commissioning/support is worth paying for even with existing software |
+| evcc | Established EV/solar/tariff automation; now our charger-control component | Demonstrate value in commissioning, site-specific planning, handover and support; avoid charging for an unnecessary duplicate controller |
 | EMHASS | Existing optimisation engine | Reuse it when appropriate; avoid selling an inferior reinvention |
 | Predbat | Capable battery scheduling ecosystem | Respect its current licence and supported commercial route |
 | Installer's existing monitoring service | Trusted relationship and equipment knowledge | Clear responsibilities and evidence, not extra alert noise |
 
 The durable advantage is a tested compatibility matrix, repeatable installation, excellent handover and accumulated fault/recovery knowledge. A generic prompt sent to a cheap model is easy to copy. Open source can grow referrals and external testing, but issue triage and security maintenance are real work.
 
+Qualify a small number of exact SKUs and firmware combinations first. Fronius Wattpilot Flex is a candidate for the first charger family; Wallbox's upstream OCPP metering/recovery limitations make it a separate qualification exercise. Do not order either based on this document. The [matrix](COMPATIBILITY.md) supplies manufacturer/upstream evidence and outstanding tests.
+
 ## What creates value in a zero-feed-in household
 
 Value comes from reducing **paid imports at useful times**, meeting departure requirements and reducing owner effort. Some surplus has no financial value when there is nothing useful to consume it. More battery cycling is not automatically better. A cheap daytime tariff can make a simple fixed schedule highly competitive with an elaborate weather-aware optimiser.
+
+Record a zero feed-in **price** separately from a zero-export **limit**. An export-following charger may not discover curtailed solar when a site is regulated to zero export. Scope that requirement before selling “use every spare solar watt.” Historical Energex data can inform assessment, but the operational controller needs a qualified live measurement; see [metering/API choices](METERING.md).
 
 Measure against at least two baselines: the actual previous household behaviour and a competent native cheap-window schedule. Keep reserve/ending SOC comparable. Correct for weather, EV energy demand, occupancy and tariff changes. Avoid attributing a sunny month or a newly installed battery to the automation service.
 
@@ -52,7 +60,7 @@ Evidence should include departure success, total EV energy delivered, import cos
 
 ## Illustrative unit economics
 
-These are **invented ex-GST planning assumptions**, not market prices or quotes. Hardware and electrical work are separate.
+These are **invented ex-GST planning assumptions**, not market prices or quotes. Hardware, electrical work and any upstream entitlement/service purchase are separate. Add actual supplier costs before making an offer.
 
 | Per-site item | Assumption | Amount |
 |---|---:|---:|
@@ -72,6 +80,8 @@ An optional maintenance fee must cover expected support, provider/monitoring cos
 Start with one installer and one repeatable equipment combination. Agree a division of work: electrical commissioning and vendor warranty matters remain with the responsible installer; software configuration, playbook support and data handling have named owners. Decide who receives the first call when the car is not charged.
 
 Provide an installer intake sheet, compatibility checklist, pre-install LAN requirements, commissioning evidence pack, native fallback card and a clear referral/fee arrangement. Do not pay or assume referrals before discussing terms. The installer should not need to learn Python to explain the product.
+
+The handover should identify the supported meter, charger and vehicle capabilities separately. Include the one writer of charger settings, expected behavior if the host/evcc/cloud fails, ownership of sponsor/API accounts and the supported update path. A live mode change can persist after Solar Playbook exits; the installation must explain that plainly and demonstrate recovery.
 
 Initially interview five installers and ten owners. Ask about failures and time spent, not just whether “AI solar sounds useful.” Test willingness to pay against a concrete scope and handover example. Then run 3–5 opt-in pilot homes with similar equipment and different daily patterns. Obtain permission before collecting or sharing identifiable household data.
 

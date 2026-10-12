@@ -33,3 +33,14 @@ Checked 12 October 2026. These sources establish interface/installation facts an
 | Electrical work | [Queensland licensing](https://www.worksafe.qld.gov.au/licensing-and-registrations/electrical-licences/electrical-contactor-licences) | Contractor licensing requirements |
 
 The supplied example is not a verified description of a particular installation, an electricity-plan quote, an API price comparison or a financial return estimate. Live physical and cloud-provider validation remain separate milestones.
+
+## Multi-brand extension: checked 13 October 2026
+
+| Topic | Primary source | What was checked |
+|---|---|---|
+| Shelly meter RPC | [EM component](https://shelly-api-docs.shelly.cloud/gen2/ComponentsAndServices/EM/) | `EM.GetStatus`, total active power in W, errors; no sample timestamp in this response |
+| HA timestamp semantics | [State-reported timestamp](https://developers.home-assistant.io/blog/2024/03/20/state_reported_timestamp/) | A state report is not proof of a fresh upstream hardware sample |
+| evcc pinned API | [0.317.1 API](https://github.com/evcc-io/evcc/blob/0.317.1/server/openapi.yaml), [state](https://github.com/evcc-io/evcc/blob/0.317.1/server/openapi.state.yaml) | Mode endpoint, 1-based indices, current Smart mode and receipt boundaries |
+| Device and commercial evidence | [Compatibility register](COMPATIBILITY.md), [metering register](METERING.md) | Direct links for BYD, Fronius, Wallbox, sponsor terms, utility data and future RTD framework |
+
+No commercial weather/meter API account, real household data or vehicle account was used for these tests. The API contract tests use synthetic payloads and fake transports.

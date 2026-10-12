@@ -80,3 +80,14 @@ Treat weather prose, model output and upstream release notes as untrusted input.
 Tests cover conservation of DC energy, AC load balance and battery storage changes across randomised days; inverter and SOC limits; no simultaneous battery charge/discharge; deadline/availability constraints; stale forecasts; missing/invalid telemetry; negative-price target bounds; AI outages; command eligibility; HTML escaping; and CLI replay.
 
 Mocks establish software contract behaviour, not hardware compatibility. The commissioning suite must add recorded real-site traces and attended live tests for firmware changes, cloud errors, car wake latency, network interruption, external schedule conflicts and power restoration. Prefer replaying a captured regression over adding a test that merely reproduces the implementation's own arithmetic.
+
+## v0.2 adapter contracts
+
+- `metering.read_meter(config)` returns normalized grid kW with positive import/negative export and explicit timestamp provenance. It does not change the forecast or authorize a handoff.
+- `vehicles.resolve_vehicle_request(config, now=...)` converts an explicit wall/battery energy request or fresh mapped SOC into required battery kWh. The CLI updates both `Scenario.ev_required_kwh` and `Site.ev_efficiency`, and records conversion assumptions in `report.json`.
+- `charging.Evcc.read()` selects a 1-based loadpoint and validates its configured name. `handoff_mode()` previews by default and can request one persistent `off`, `smart` or `now` mode in an attended commissioned session. It checks the installed API version, identity, readiness, expected mode, phase configuration and maximum-current ceiling before POST. A private receipt separates attempted write, mode read-back and physical feedback.
+- `integration_demo.run_demo()` exercises the complete offline path, including the 15 wall kWh -> 13.5 battery kWh conversion and a synthetic mode preview.
+
+The meter adapter is an observation API; day-ahead planning still requires interval load, PV, tariff and availability inputs. A single grid-power reading cannot supply those forecasts. evcc uses its own commissioned live meter feed. A simulated amp trajectory is not automatically executed by the mode handoff. The simulator remains single-phase and single-EV even though device readouts can describe three-phase equipment.
+
+The evcc contract reviewed for this release is [0.317.1 OpenAPI](https://github.com/evcc-io/evcc/blob/0.317.1/server/openapi.yaml), including its [state schema](https://github.com/evcc-io/evcc/blob/0.317.1/server/openapi.state.yaml). Smart mode follows evcc's existing tariff, solar, battery and minimum-charge policy; it is not an assurance of solar-only energy. The state API has no cross-version compatibility promise.
