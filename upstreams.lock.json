@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-10-12",
+  "note": "Research snapshots, not a commissioned compatibility matrix. No upstream source is relicensed.",
+  "sources": [
+    {
+      "id": "sigen",
+      "repository": "https://github.com/TypQxQ/Sigenergy-Local-Modbus.git",
+      "revision": "b66e3042de6396205c33f3603108579b7ef73e6a",
+      "license": "MIT",
+      "status": "source snapshot; not a tested compatibility set"
+    },
+    {
+      "id": "tesla_ble",
+      "repository": "https://github.com/yoziru/esphome-tesla-ble.git",
+      "revision": "e46e8c578c0a83387c6a3355e43b9ab8a672ea30",
+      "license": "AGPL-3.0",
+      "status": "source snapshot; not a tested compatibility set"
+    },
+    {
+      "id": "emhass",
+      "repository": "https://github.com/davidusb-geek/emhass.git",
+      "revision": "5aa2dde427f3eb3c71e1e17d732e09544d837f6a",
+      "license": "MIT",
+      "status": "source snapshot; not a tested compatibility set"
+    },
+    {
+      "id": "evcc",
+      "repository": "https://github.com/evcc-io/evcc.git",
+      "revision": "c4ff64b4dee9dfe811fa4c8ee4daf9d645484489",
+      "license": "MIT",
+      "status": "source snapshot; not a tested compatibility set"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "solar-playbook"
+version = "0.1.0"
+description = "Local home-energy planning, simulation and Home Assistant shadow integration"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = []
+
+[project.scripts]
+solar-playbook = "solar_playbook.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["solar_playbook*"]
