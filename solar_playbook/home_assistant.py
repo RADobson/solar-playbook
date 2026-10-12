@@ -1,4 +1,4 @@
-"""Read-only HA adapter. This release contains no equipment-write endpoint."""
+"""Read-only HA adapter. This adapter never calls equipment-write endpoints."""
 from datetime import datetime
 import json
 from urllib.parse import urlparse, quote
