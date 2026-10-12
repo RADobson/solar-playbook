@@ -1,48 +1,53 @@
 # Solar Playbook
 
-**An open home-energy project for people who want a charged car, useful solar and less daily admin.**
+**A working multi-brand home-energy alpha for a charged car, useful solar and less daily admin.**
 
-Run the planning software on a modest always-on device: a suitable Raspberry Pi, a small PC, an existing server or a Mac. Use Home Assistant to connect the house, an ESP32 near the driveway to talk to the Tesla over Bluetooth, and Apple Home as the familiar interface. Optional cloud AI explains the plan through OpenAI, Claude or a compatible provider. No local model or GPU is required.
+Run it on a suitable Raspberry Pi, small PC, existing server or Mac. Read a local energy meter directly or through Home Assistant, plan a charging goal, and use evcc as the integration boundary for different chargers and cars. BYD, Tesla and other compatible vehicles can use an energy request without a vehicle API; optional telemetry adds a battery-percentage target. Cloud AI can explain the result. No local model or GPU is required.
 
-**v0.1 is a working simulation and read-only integration alpha. It does not control your inverter, battery or vehicle.** The live commissioning work requires the actual equipment and is documented, rather than represented as already tested.
+**v0.2.0 — 13 October 2026:** simulation, read-only meter/vehicle/controller adapters, and one explicitly enabled **attended evcc mode handoff**. Normal planning and demo commands make no equipment changes. The optional handoff can persistently change evcc's mode and thereby affect charging; it is not an unattended controller. **No equipment combination is field qualified yet.**
 
 ## Try it in two minutes
 
-Python 3.11 or later. The core has **no third-party runtime dependencies**, subscription, API key or internet requirement.
+Python 3.11 or later. The offline demo has **no third-party runtime dependencies**, subscription or API-key requirement. It needs no network after the source is downloaded.
 
 ```sh
 git clone https://github.com/RADobson/solar-playbook.git
 cd solar-playbook
-python3 -m solar_playbook demo --out out/sunny
-open out/sunny/report.html              # macOS; otherwise open in your browser
+python3 -m solar_playbook device-demo --out out/devices
+open out/devices/report.html            # macOS; otherwise open in your browser
 python3 -m unittest discover -s tests -v
 ```
 
-Try `--scenario cloudy`, `away`, `impossible` or `stale`. Give each run a different `--out` directory. The last two deliberately return exit code 2 and do not select a plan.
+`out/devices/devices.json` shows a synthetic meter observation, an offline 15 kWh wall-energy request, and an evcc mode **preview**. The report simulates a day. These are linked demonstrations of the contracts, not a real meter-to-charger control loop.
+
+Try the same request on a cloudy day, with no car account:
 
 ```sh
-python3 -m solar_playbook demo --scenario cloudy --out out/cloudy
+python3 -m solar_playbook demo --scenario cloudy --vehicle-request examples/vehicle-offline.json --out out/cloudy
 python3 -m solar_playbook plan out/cloudy/input.json --out out/replay
 ```
 
-The JSON input is the provider-neutral contract. Edit the generated copy for your own experiments. All bundled defaults, dates, loads, battery capacities and tariffs are **synthetic**. They are not an equipment recommendation or an estimate of your bill.
+Other scenarios are `sunny`, `away`, `impossible` and `stale`; the last two deliberately return exit code 2 without selecting a plan. All bundled dates, loads, capacities and tariffs are **synthetic**, not an equipment recommendation or bill estimate.
 
 ## The big picture
 
 ```mermaid
 flowchart LR
-  W[Weather and PV forecasts] --> P[Local planner on supported host]
-  O[Optional AI API: OpenAI / Claude / compatible] -->|advice only| P
-  S[Sigenergy local Modbus] --> H[Home Assistant]
-  H -->|measured state| P
-  P -. future commissioned actuator .-> H
-  A[Apple Home and Watch] <-->|HomeKit Bridge software| H
-  H <-->|Wi-Fi| E[ESP32 near car]
-  E <-->|authenticated Bluetooth| T[Tesla vehicle]
-  C[Tesla Wall Connector] -->|electrical power| T
+  M[Meter / inverter] --> R[Read adapters]
+  H[Home Assistant: optional vehicle telemetry] --> R
+  R --> P[Solar Playbook: plan and explain]
+  W[Forecasts / tariff / household intent] --> P
+  O[Optional AI API] -->|advice only| P
+  P --> S[Shadow result / attended mode handoff]
+  S --> E[evcc: sole charger writer]
+  E --> C[Qualified charger]
+  C --> V[Compatible car: BYD / Tesla / other]
+  A[Apple Home] <-->|HomeKit Bridge software| H
 ```
 
-The ESP32 communicates with the **car**, not the Wall Connector. The car adjusts how much current it draws. HomeKit Bridge is an integration inside Home Assistant. The main host can be customer supplied or installer supplied. A HomePod/Apple TV is a separate Apple home hub for remote Home access and Apple home automations.
+HomeKit Bridge is software inside Home Assistant; the supplied request helpers still need commissioning and wiring into a future household workflow. A HomePod/Apple TV is a separate hub for remote Apple Home access. The optional Tesla ESP32 route remains a link to the **car**, not the Wall Connector, and is distinct from the multi-brand charger path.
+
+evcc must already have its own commissioned meter, charger, limits and policy. `smart` follows that policy, which can include tariff-based grid charging and battery preferences; it does not mean “solar only.” A handoff does not upload the simulator's current-by-current schedule.
 
 ## What works in this release
 
@@ -54,26 +59,30 @@ The ESP32 communicates with the **car**, not the Wall Connector. The car adjusts
 | HTML/JSON reports and replayable input | Implemented |
 | BoM XML weather-context parser | Implemented against synthetic schema fixtures; live product commissioning pending |
 | Home Assistant REST entity reader | Implemented; mocked transport tests; local site not connected |
+| Shelly Pro 3EM and mapped HA grid-power readers | Implemented; units, signs and timestamp provenance tested; read-only, no per-phase protection |
+| Brand-neutral energy request and HA SOC target conversion | Implemented; explicit wall/battery energy basis; synthetic BYD mapping, no verified vehicle account |
+| evcc 0.317.1 state read and mode preview | Implemented against documented contract and mocked transport |
+| Optional attended evcc mode handoff | One bounded `off` / `smart` / `now` request with preflight gates and read-back; disabled by default; resulting mode persists |
 | Local Ollama structured explanation with fallback | Implemented; mocked tests; model not installed or benchmarked here |
 | OpenAI Responses, Claude Messages, compatible chat API adapters | Implemented; mocked contract tests; no paid calls made |
 | Persistent daily call cap and monthly request allowance | Implemented; not a provider billing guarantee |
-| Freshness, manual override and bounded command eligibility contract | Implemented as a pure function; **no actuator** |
+| Original planner proposal-eligibility contract | Still a pure function; does not execute a simulated charging trajectory |
 | Home Assistant/HomeKit helper configuration | Supplied template; UI requests only; HA validation pending |
-| Live forecast downloads and site PV calibration | Installation/design documented; not automated in v0.1 |
-| Battery/vehicle commands, daemon, watchdog, automatic replanning | Future hardware commissioning milestone |
+| Wattwatchers / Energex history / direct BYD login / direct OCPP server | Documented integration routes; not implemented here |
+| Live forecast downloads and site PV calibration | Installation/design documented; not automated |
+| Direct battery/vehicle commands, daemon, watchdog, automatic replanning | Future work; no field qualification or automatic restoration supplied |
 
-This is a finite candidate planner, not a global MILP optimiser. It does not model three-phase sites, grid charging the home battery, battery export, outages, V2G, temperature derating, or second-by-second load protection. See [model limits](docs/ENGINEERING.md).
+An upstream driver listing is not a tested installation. Read the [compatibility matrix and evidence levels](docs/COMPATIBILITY.md). The planner evaluates five candidate schedules for one EV and a single-phase model; it does not model grid charging the home battery, battery export, outages, V2G, temperature derating, or second-by-second protection. See [model limits](docs/ENGINEERING.md).
 
 ## Start here
 
-1. [Project plan and design decisions](docs/PROJECT_PLAN.md)
-2. [Hardware-neutral installation and BYO device guide](docs/INSTALL.md) · [optional Mac notes](docs/INSTALL_MAC.md)
-3. [BoM, solar forecasts and data rights](docs/WEATHER.md)
-4. [Engineering model and interfaces](docs/ENGINEERING.md)
-5. [Commissioning, recovery and support](docs/COMMISSIONING.md)
-6. [Business case, installer partnership and pilot economics](docs/BUSINESS.md)
-7. [Upstream software and licences](docs/DEPENDENCIES.md)
-8. [Evidence and sources](docs/SOURCES.md)
+1. [Multi-brand design and control boundaries](docs/MULTIBRAND_DESIGN.md) · [project plan](docs/PROJECT_PLAN.md)
+2. [Metering and smart-meter APIs](docs/METERING.md) · [equipment compatibility](docs/COMPATIBILITY.md)
+3. [Installation and BYO device guide](docs/INSTALL.md) · [integration commands](docs/INTEGRATIONS.md)
+4. [Commissioning and recovery](docs/COMMISSIONING.md) · [validation evidence](docs/VALIDATION.md)
+5. [Engineering model](docs/ENGINEERING.md) · [weather and data rights](docs/WEATHER.md)
+6. [Business case](docs/BUSINESS.md) · [upstream licences and entitlements](docs/DEPENDENCIES.md)
+7. [Sources](docs/SOURCES.md) · [optional Mac notes](docs/INSTALL_MAC.md)
 
 ## Optional integrations
 
@@ -105,4 +114,4 @@ This extracts weather context, **not solar production predictions**. BoM has fre
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). The highest-value next contribution is a recorded, anonymised commissioning test against a real site. Hardware changes need telemetry, a rollback procedure and test evidence. Do not submit household credentials or live VINs.
 
-Our code is [MIT licensed](LICENSE). Linked upstream components retain their own licences. This project is independent of Tesla, Sigenergy, Apple and the Bureau of Meteorology.
+Our code is [MIT licensed](LICENSE). Linked components retain their licences and service terms; some evcc charger drivers require sponsor tokens. There are recurring and one-time upstream options to assess for each installation. This project is independent of the equipment vendors, Apple and the Bureau of Meteorology.

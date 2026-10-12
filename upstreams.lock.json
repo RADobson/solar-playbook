@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "checked_on": "2026-10-12",
+  "checked_on": "2026-10-13",
   "note": "Research snapshots, not a commissioned compatibility matrix. No upstream source is relicensed.",
   "sources": [
     {
@@ -27,9 +27,9 @@
     {
       "id": "evcc",
       "repository": "https://github.com/evcc-io/evcc.git",
-      "revision": "c4ff64b4dee9dfe811fa4c8ee4daf9d645484489",
+      "revision": "259d5fd99774ccb3690eb0de8ebbf873089bd13d",
       "license": "MIT",
-      "status": "source snapshot; not a tested compatibility set"
+      "status": "0.317.1 API contract reviewed and mocked; equipment qualification pending; selected adapters require sponsor entitlement"
     }
   ]
 }
