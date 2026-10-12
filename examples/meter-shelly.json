@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "adapter": "shelly_pro3em",
+  "base_url": "http://REPLACE_WITH_METER_HOST",
+  "sign": "import_positive",
+  "component_id": 0,
+  "phase_count": 1,
+  "max_age_seconds": 120,
+  "timeout_seconds": 5
+}

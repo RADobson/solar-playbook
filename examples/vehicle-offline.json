@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "mode": "add_energy",
+  "energy_kwh": 15,
+  "energy_basis": "wall",
+  "charging_efficiency": 0.9
+}

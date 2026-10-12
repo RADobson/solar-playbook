@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "adapter": "home_assistant",
+  "base_url": "http://homeassistant.local:8123",
+  "entity_id": "sensor.replace_with_grid_power",
+  "unit": "W",
+  "sign": "import_positive",
+  "token_env": "HA_TOKEN",
+  "phase_count": 1,
+  "max_age_seconds": 120,
+  "timeout_seconds": 5
+}

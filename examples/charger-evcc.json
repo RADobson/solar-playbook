@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "adapter": "evcc",
+  "base_url": "http://127.0.0.1:7070",
+  "loadpoint_id": 1,
+  "expected_loadpoint_name": "REPLACE_WITH_EVCC_LOADPOINT_NAME",
+  "expected_version": "0.317.1",
+  "token_env": "EVCC_TOKEN",
+  "expected_vehicle_name": null,
+  "control_enabled": false,
+  "commissioning_id": "",
+  "independent_limits_verified": false,
+  "fallback_verified": false,
+  "max_current_amps": 16,
+  "phases": 1,
+  "allowed_modes": ["off", "smart"],
+  "max_request_seconds": 15
+}

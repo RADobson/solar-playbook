@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "mode": "target_soc",
+  "target_soc_percent": 80,
+  "capacity_kwh": 60,
+  "capacity_basis": "usable",
+  "charging_efficiency": 0.9,
+  "telemetry": {
+    "source": "home_assistant",
+    "base_url": "http://homeassistant.local:8123",
+    "token_env": "SOLAR_PLAYBOOK_HA_TOKEN",
+    "entity_id": "sensor.replace_with_vehicle_soc",
+    "timestamp_field": "attributes.replace_with_source_observed_at",
+    "max_age_seconds": 600
+  }
+}
