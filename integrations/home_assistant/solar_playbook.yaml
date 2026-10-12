@@ -1,0 +1,38 @@
+# UI TEMPLATE ONLY: these helpers do not control equipment in v0.1.
+# Merge as a Home Assistant package after reviewing your existing configuration.
+# Home Assistant configuration validation and physical HomeKit pairing are pending.
+input_boolean:
+  solar_playbook_automatic:
+    name: Solar Playbook Automatic request
+    icon: mdi:solar-power
+    initial: false
+  solar_playbook_charge_now:
+    name: Solar Playbook Charge now request
+    icon: mdi:car-electric
+    initial: false
+  solar_playbook_pause:
+    name: Solar Playbook Pause request
+    icon: mdi:pause-circle
+    initial: false
+input_number:
+  solar_playbook_target_soc:
+    name: Solar Playbook Target SOC
+    min: 20
+    max: 100
+    step: 5
+    unit_of_measurement: '%'
+input_datetime:
+  solar_playbook_departure:
+    name: Solar Playbook Departure
+    has_date: true
+    has_time: true
+
+# If HomeKit Bridge is already configured, add these helpers to that bridge's
+# include list through its existing configuration instead of duplicating it.
+homekit:
+  - name: Solar Playbook Requests
+    filter:
+      include_entities:
+        - input_boolean.solar_playbook_automatic
+        - input_boolean.solar_playbook_charge_now
+        - input_boolean.solar_playbook_pause
