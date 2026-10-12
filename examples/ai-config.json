@@ -1,0 +1,10 @@
+{
+  "provider": "none",
+  "enabled": false,
+  "model": "",
+  "api_key_env": "SOLAR_PLAYBOOK_AI_KEY",
+  "base_url": "",
+  "daily_call_limit": 4,
+  "monthly_allowance_usd": 2.0,
+  "reserve_per_call_usd": 0.05
+}
